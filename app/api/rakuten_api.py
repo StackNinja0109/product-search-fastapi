@@ -26,10 +26,9 @@ class RakutenAPI:
         response = requests.get(url, params=params)
         
         if response.status_code != 200:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to fetch data from Rakuten API"
-            )
+            print("Failed to fetch data from Rakuten API")
+            _products[jan_code] = []
+            return []
             
         data = response.json().get("Items")
         products = []
@@ -39,6 +38,7 @@ class RakutenAPI:
                 'price': product.get('Item')['itemPrice'],
                 'image': (product.get('Item').get('mediumImageUrls') or [{}])[0].get('imageUrl', ''),
                 'url': product.get('Item')['itemUrl'],
+                'platform': '楽天市場',
             }
             products.append(product_details)
 

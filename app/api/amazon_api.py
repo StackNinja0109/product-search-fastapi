@@ -1,4 +1,3 @@
-import os
 from typing import Dict, List
 from amazon_paapi import AmazonApi as PAAPI
 from fastapi import HTTPException, status
@@ -28,7 +27,8 @@ class AmazonAPI:
                     'name': item._item_info._title._display_value,
                     'price': int(item._offers._listings[0]._price._amount) if item._offers and item._offers._listings else 0,
                     'image': item._images._primary._medium._url if item._images and item._images._primary else '',
-                    'url': item.detail_page_url
+                    'url': item.detail_page_url,
+                    'platform': 'Amazon',
                 }
                 products.append(product_details)
                 
@@ -37,9 +37,8 @@ class AmazonAPI:
             return products
             
         except Exception as e:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Failed to fetch data from Amazon API: {str(e)}"
-            )
+            print(f"Failed to fetch data from Amazon API: {str(e)}")
+            _products[jan_code] = []
+            return []
 
 amazon_api = AmazonAPI()

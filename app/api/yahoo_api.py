@@ -89,6 +89,7 @@ class YahooAPI:
                         'price': product.get('price'),
                         'image': product.get('image')['medium'] or product.get('image')['small'] or '',
                         'url': product.get('url'),
+                        'platform': 'Yahooショッピング',
                     }
                     products.append(product_details)
 

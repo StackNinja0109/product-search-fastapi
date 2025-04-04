@@ -1,4 +1,4 @@
 from pydantic import BaseModel
 
-class HelloRequest(BaseModel):
-  content: str
+class SearchRequest(BaseModel):
+  keyword: str

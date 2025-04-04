@@ -14,12 +14,18 @@ async def handle_search_product(request: SearchRequest):
       detail="Search keyword is required"
     )
 
+  yahoo_products = []
+  rakuten_products = []
+  amazon_products = []
+
   jan_code = yahoo_api.get_jan_code(keyword)
-  yahoo_products = yahoo_api.search_products(jan_code)
-  rakuten_products = rakuten_api.search_products(jan_code)
-  amazon_products = amazon_api.search_products(jan_code)
+  if jan_code:
+    yahoo_products = yahoo_api.search_products(jan_code)
+    rakuten_products = rakuten_api.search_products(jan_code)
+    amazon_products = amazon_api.search_products(jan_code)
   
   return {
+    "jan_code": jan_code,
     "yahoo_products": yahoo_products,
     "rakuten_products": rakuten_products,
     "amazon_products": amazon_products

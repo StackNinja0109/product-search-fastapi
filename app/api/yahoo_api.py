@@ -54,7 +54,7 @@ class YahooAPI:
             print(f"An unexpected error occurred: {e}")
             return None
 
-    def get_yahoo_product_details(self, jan_code, max_results=20):
+    def search_products(self, jan_code, max_results=20):
         """
         Get detailed product information using Yahoo Shopping API V3
         """
@@ -86,11 +86,9 @@ class YahooAPI:
                 for product in data['hits']:
                     product_details = {
                         'name': product.get('name'),
-                        'description': product.get('description'),
-                        'url': product.get('url'),
-                        'image': product.get('image', []),
                         'price': product.get('price'),
-                        'title': product.get('name'),
+                        'image': product.get('image')['medium'] or product.get('image')['small'] or '',
+                        'url': product.get('url'),
                     }
                     products.append(product_details)
 

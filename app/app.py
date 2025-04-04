@@ -5,9 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.auth import authenticate_token
 from app.models import SearchRequest
-from app.handlers import handle_search
+from app.handlers import handle_search_product
 
-web_app = FastAPI(title="fastapi-skeleton", version="1.0.0", dependencies=[Depends(authenticate_token)])
+web_app = FastAPI(title="Product Search", version="1.0.0", dependencies=[Depends(authenticate_token)])
 
 origins = ["*"]
 web_app.add_middleware(
@@ -18,9 +18,9 @@ web_app.add_middleware(
   allow_headers=["*"]
 )
 
-@web_app.post("/v1/search")
+@web_app.post("/v1/search/product")
 async def search(request: SearchRequest):
-  return await handle_search(request)
+  return await handle_search_product(request)
 
 if __name__ == "__main__":
   is_reload = os.getenv("APP_ENV", "staging") == "staging"

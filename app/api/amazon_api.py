@@ -1,5 +1,7 @@
 from typing import Dict, List
 from amazon_paapi import AmazonApi as PAAPI
+import aiohttp
+import asyncio
 from fastapi import HTTPException, status
 
 from app import AMAZON_PARTNER_TAG, AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_REGION
@@ -15,12 +17,17 @@ class AmazonAPI:
             AMAZON_REGION
         )
 
-    def search_products(self, jan_code: str) -> List[Dict]:
+    async def search_products(self, jan_code: str) -> List[Dict]:
         if jan_code in _products:
             return _products[jan_code]
-            
+       
         try:
-            response = self.api.search_items(keywords=jan_code, search_index='All')            
+            response = await asyncio.to_thread(
+                self.api.search_items,
+                keywords=jan_code,
+                search_index='All'
+            )
+           
             products = []
             for item in response._items:
                 product_details = {
@@ -31,14 +38,14 @@ class AmazonAPI:
                     'platform': 'Amazon',
                 }
                 products.append(product_details)
-                
+               
             products.sort(key=lambda x: x['price'])
             _products[jan_code] = products
             return products
-            
+           
         except Exception as e:
             print(f"Failed to fetch data from Amazon API: {str(e)}")
             _products[jan_code] = []
             return []
-
+       
 amazon_api = AmazonAPI()

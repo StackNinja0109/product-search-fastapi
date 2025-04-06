@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-import re
+import asyncio
 
 from app.models import SearchRequest
 from app.api.yahoo_api import yahoo_api
@@ -20,9 +20,13 @@ async def handle_search_product(request: SearchRequest):
 
   jan_code = yahoo_api.get_jan_code(keyword)
   if jan_code:
-    yahoo_products = yahoo_api.search_products(jan_code)
-    rakuten_products = rakuten_api.search_products(jan_code)
-    amazon_products = amazon_api.search_products(jan_code)
+    tasks = [
+        yahoo_api.search_products(jan_code),
+        rakuten_api.search_products(jan_code),
+        amazon_api.search_products(jan_code)
+    ]
+
+    yahoo_products, rakuten_products, amazon_products = await asyncio.gather(*tasks)
   
   return {
     "jan_code": jan_code,

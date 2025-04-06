@@ -1,4 +1,5 @@
 import requests
+import aiohttp
 from collections import Counter
 from app import YAHOO_CLIENT_ID, YAHOO_API_ENDPOINT
 
@@ -54,7 +55,7 @@ class YahooAPI:
             print(f"An unexpected error occurred: {e}")
             return None
 
-    def search_products(self, jan_code, max_results=20):
+    async def search_products(self, jan_code, max_results=20):
         """
         Get detailed product information using Yahoo Shopping API V3
         """
@@ -76,25 +77,25 @@ class YahooAPI:
         }
         
         try:
-            response = requests.get(url, headers=headers, params=params)
-            response.raise_for_status()
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, headers=headers, params=params) as response:
+                    response.raise_for_status()
+                    data = await response.json()            
+                    products = []
             
-            data = response.json()
-            products = []
-            
-            if 'hits' in data and data['hits']:
-                for product in data['hits']:
-                    product_details = {
-                        'name': product.get('name'),
-                        'price': product.get('price'),
-                        'image': product.get('image')['medium'] or product.get('image')['small'] or '',
-                        'url': product.get('url'),
-                        'platform': 'Yahooショッピング',
-                    }
-                    products.append(product_details)
+                    if 'hits' in data and data['hits']:
+                        for product in data['hits']:
+                            product_details = {
+                                'name': product.get('name'),
+                                'price': product.get('price'),
+                                'image': product.get('image')['medium'] or product.get('image')['small'] or '',
+                                'url': product.get('url'),
+                                'platform': 'Yahooショッピング',
+                            }
+                            products.append(product_details)
 
-            _products[jan_code] = products
-            return products
+                    _products[jan_code] = products
+                    return products
             
         except requests.RequestException as e:
             print(f"API request error: {e}")

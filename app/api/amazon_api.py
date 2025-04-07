@@ -40,8 +40,8 @@ class AmazonAPI:
                 products.append(product_details)
                
             products.sort(key=lambda x: x['price'])
-            _products[jan_code] = products
-            return products
+            _products[jan_code] = products[:5]
+            return _products[jan_code]
            
         except Exception as e:
             print(f"Failed to fetch data from Amazon API: {str(e)}")

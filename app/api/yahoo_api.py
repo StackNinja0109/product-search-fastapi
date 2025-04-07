@@ -94,8 +94,8 @@ class YahooAPI:
                             }
                             products.append(product_details)
 
-                    _products[jan_code] = products
-                    return products
+                    _products[jan_code] = products[:5]
+                    return _products[jan_code]
             
         except requests.RequestException as e:
             print(f"API request error: {e}")

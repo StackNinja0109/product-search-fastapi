@@ -4,8 +4,8 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.auth import authenticate_token
-from app.models import SearchRequest
-from app.handlers import handle_search_product
+from app.models import SearchRequest, ParserRequest
+from app.handlers import handle_search_product, handle_parser_pdf
 
 web_app = FastAPI(title="Product Search", version="1.0.0", dependencies=[Depends(authenticate_token)])
 
@@ -21,6 +21,10 @@ web_app.add_middleware(
 @web_app.post("/v1/search/product")
 async def search(request: SearchRequest):
   return await handle_search_product(request)
+
+@web_app.post("/v1/parser/pdf")
+async def parser(request: ParserRequest):
+  return await handle_parser_pdf(request)
 
 if __name__ == "__main__":
   is_reload = os.getenv("APP_ENV", "staging") == "staging"

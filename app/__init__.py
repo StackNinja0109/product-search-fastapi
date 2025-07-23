@@ -19,6 +19,11 @@ AMAZON_ACCESS_KEY = os.getenv('AMAZON_ACCESS_KEY', '')
 AMAZON_SECRET_KEY = os.getenv('AMAZON_SECRET_KEY', '')
 AMAZON_REGION = os.getenv('AMAZON_REGION', '')
 
+# LLAMA_PARSE & GEMINI
+LLAMA_PARSE_API_KEY = os.getenv('LLAMA_PARSE_API_KEY', '')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
+GEMINI_MODEL_NAME = os.getenv('GEMINI_MODEL_NAME', '')
+
 if not YAHOO_CLIENT_ID:
   raise ValueError("YAHOO_CLIENT_ID environment variable is not set")
 
@@ -27,3 +32,9 @@ if not RAKUTEN_APP_ID:
 
 if not all([AMAZON_PARTNER_TAG, AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY]):
   raise ValueError("Amazon API credentials not properly configured")
+
+if not LLAMA_PARSE_API_KEY:
+  raise ValueError("LLAMA_PARSE_API_KEY environment variable is not set")
+
+if not all([GEMINI_API_KEY, GEMINI_MODEL_NAME]):
+  raise ValueError("GEMINI_KEY environment variable is not set")

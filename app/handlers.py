@@ -48,7 +48,9 @@ async def handle_parser_pdf(request: ParserRequest):
 
   parser = LlamaParse(
     api_key=LLAMA_PARSE_API_KEY,
-    result_type="text"
+    result_type="markdown",
+    premium_mode=True,
+    language="ja"
   )
 
   try:

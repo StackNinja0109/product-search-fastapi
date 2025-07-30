@@ -53,8 +53,6 @@ async def handle_parser_pdf(request: ParserRequest):
   genai.configure(api_key=GEMINI_API_KEY)
   model = genai.GenerativeModel(GEMINI_MODEL_NAME)
 
-  print(file_name, formats, target)
-
   parser = LlamaParse(
     api_key=LLAMA_CLOUD_API_KEY,
     result_type="markdown",

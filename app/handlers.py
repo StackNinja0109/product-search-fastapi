@@ -1,14 +1,20 @@
+import re
 from fastapi import HTTPException, status
 import asyncio
+import uuid
 
-from app.models import SearchRequest, ParserRequest
+from llama_cloud_services import LlamaExtract
+from llama_cloud.types import ExtractConfig, ExtractMode, ExtractTarget, ExtractConfigPriority
+from app.utils import create_records_model
+
+from app.models import SearchRequest, ParserRequest, ExtractRequest
 from app.api.yahoo_api import yahoo_api
 from app.api.rakuten_api import rakuten_api
 from app.api.amazon_api import amazon_api
 
 from llama_parse import LlamaParse
 import google.generativeai as genai
-from app import LLAMA_PARSE_API_KEY, GEMINI_API_KEY, GEMINI_MODEL_NAME
+from app import LLAMA_CLOUD_API_KEY, GEMINI_API_KEY, GEMINI_MODEL_NAME
 
 async def handle_search_product(request: SearchRequest):
   keyword = request.keyword
@@ -47,10 +53,9 @@ async def handle_parser_pdf(request: ParserRequest):
   model = genai.GenerativeModel(GEMINI_MODEL_NAME)
 
   parser = LlamaParse(
-    api_key=LLAMA_PARSE_API_KEY,
+    api_key=LLAMA_CLOUD_API_KEY,
     result_type="text",
-    premium_mode=True,
-#    use_vendor_multimodal_model=True,
+    premium_mode=True,    # use_vendor_multimodal_model=True,
     language="ja"
   )
 
@@ -99,3 +104,53 @@ async def handle_parser_pdf(request: ParserRequest):
       status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
       detail=f"Error parsing PDF: {str(e)}"
     )
+
+async def handle_extract_table(request: ExtractRequest):
+  file_name = request.file_url
+  formats = request.formats
+
+  try:
+    unique_agent_name = f"table_agent_{uuid.uuid4()}"
+  
+    extractor = LlamaExtract()
+    # Enhanced system prompt to ensure comprehensive extraction
+    system_prompt = """
+    You are an AI assistant specialized in extracting ALL table data from PDFs.
+    Important instructions:
+    1. Extract EVERY single row from ALL tables in the document
+    2. Do not skip any items or tables, even if they look similar
+    3. Process the entire document from start to finish
+    4. Include items even if some fields are empty
+    5. Pay special attention to:
+       - Tables spanning multiple pages
+       - Tables with merged cells
+       - Small or hard to read text
+       - Tables in different formats
+    6. Verify the total count of extracted items matches the document
+    7. Double-check for any missed entries before returning results
+    """
+    
+    table_config = ExtractConfig(
+        extraction_mode=ExtractMode.PREMIUM,
+        extraction_target=ExtractTarget.PER_DOC,
+        system_prompt=system_prompt,
+        use_reasoning=True,  # Enable reasoning for better extraction
+        cite_sources=True    # Enable source citation to ensure coverage
+    )
+    table_agent = extractor.create_agent(
+        name=unique_agent_name, 
+        data_schema=create_records_model(formats),
+        config=table_config
+    )
+
+    result = table_agent.extract(file_name)
+    return result.data['items']
+    
+  except Exception as e:
+    raise HTTPException(
+      status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+      detail=f"Error extracting table: {str(e)}"
+    )
+
+
+  

@@ -61,7 +61,7 @@ A FastAPI-based microservice that provides product search functionality across m
    AMAZON_REGION=your_amazon_region
 
    # AI Services
-   LLAMA_PARSE_API_KEY=your_llama_parse_api_key
+   LLAMA_CLOUD_API_KEY=your_llama_cloud_api_kay
    GEMINI_API_KEY=your_gemini_api_key
    GEMINI_MODEL_NAME=gemini-pro
 
@@ -183,6 +183,7 @@ product-search-fastapi/
 
 ### AI Services
 - **LlamaParse**: PDF text extraction
+- **Llama Cloud Extract**: Advanced table extraction with structured data
 - **Google Gemini**: Intelligent data parsing and structuring
 
 ## 🤝 Contributing

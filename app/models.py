@@ -7,3 +7,7 @@ class SearchRequest(BaseModel):
 class ParserRequest(BaseModel):
   file_url: str
   formats: list[str]
+
+class ExtractRequest(BaseModel):
+  file_url: str
+  formats: list[str]

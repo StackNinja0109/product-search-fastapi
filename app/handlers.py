@@ -48,15 +48,19 @@ async def handle_search_product(request: SearchRequest):
 async def handle_parser_pdf(request: ParserRequest):
   file_name = request.file_url
   formats = request.formats
+  target = request.target
 
   genai.configure(api_key=GEMINI_API_KEY)
   model = genai.GenerativeModel(GEMINI_MODEL_NAME)
 
+  print(file_name, formats, target)
+
   parser = LlamaParse(
     api_key=LLAMA_CLOUD_API_KEY,
-    result_type="text",
-    premium_mode=True,    # use_vendor_multimodal_model=True,
-    language="ja"
+    result_type="markdown",
+    language="ja",
+    premium_mode=True if target == "表分析" else False,
+    use_vendor_multimodal_model=True if target == "画像分析" else False
   )
 
   try:
@@ -113,29 +117,20 @@ async def handle_extract_table(request: ExtractRequest):
     unique_agent_name = f"table_agent_{uuid.uuid4()}"
   
     extractor = LlamaExtract()
-    # Enhanced system prompt to ensure comprehensive extraction
     system_prompt = """
     You are an AI assistant specialized in extracting ALL table data from PDFs.
     Important instructions:
-    1. Extract EVERY single row from ALL tables in the document
-    2. Do not skip any items or tables, even if they look similar
-    3. Process the entire document from start to finish
-    4. Include items even if some fields are empty
-    5. Pay special attention to:
+    1. Process the entire document from start to finish
+    2. Pay special attention to:
        - Tables spanning multiple pages
        - Tables with merged cells
        - Small or hard to read text
-       - Tables in different formats
-    6. Verify the total count of extracted items matches the document
-    7. Double-check for any missed entries before returning results
     """
     
     table_config = ExtractConfig(
         extraction_mode=ExtractMode.PREMIUM,
         extraction_target=ExtractTarget.PER_DOC,
         system_prompt=system_prompt,
-        use_reasoning=True,  # Enable reasoning for better extraction
-        cite_sources=True    # Enable source citation to ensure coverage
     )
     table_agent = extractor.create_agent(
         name=unique_agent_name, 

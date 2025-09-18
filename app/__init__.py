@@ -19,10 +19,11 @@ AMAZON_ACCESS_KEY = os.getenv('AMAZON_ACCESS_KEY', '')
 AMAZON_SECRET_KEY = os.getenv('AMAZON_SECRET_KEY', '')
 AMAZON_REGION = os.getenv('AMAZON_REGION', '')
 
-# LLAMA_PARSE & GEMINI
+# LLAMA_PARSE & GEMINI & OPENAI
 LLAMA_CLOUD_API_KEY = os.getenv('LLAMA_CLOUD_API_KEY', '')
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
 GEMINI_MODEL_NAME = os.getenv('GEMINI_MODEL_NAME', '')
+OPENAI_API_KEY=os.getenv('OPENAI_API_KEY')
 
 if not YAHOO_CLIENT_ID:
   raise ValueError("YAHOO_CLIENT_ID environment variable is not set")
@@ -38,3 +39,6 @@ if not LLAMA_CLOUD_API_KEY:
 
 if not all([GEMINI_API_KEY, GEMINI_MODEL_NAME]):
   raise ValueError("GEMINI_KEY environment variable is not set")
+
+if not OPENAI_API_KEY:
+  raise ValueError("OPENAI_API_KEY environment variable is not set")

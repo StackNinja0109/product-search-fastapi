@@ -8,7 +8,3 @@ class ParserRequest(BaseModel):
   file_url: str
   formats: list[str]
   target: str
-
-class ExtractRequest(BaseModel):
-  file_url: str
-  formats: list[str]

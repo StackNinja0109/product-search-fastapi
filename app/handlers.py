@@ -7,7 +7,6 @@ from app.api.rakuten_api import rakuten_api
 from app.api.amazon_api import amazon_api
 
 from app.api.parser_pdf_api import parser_pdf_api
-from app.api.before_pdf_api import before_pdf_api
 
 async def handle_search_product(request: SearchRequest):
   keyword = request.keyword
@@ -42,10 +41,6 @@ async def handle_search_product(request: SearchRequest):
 
 async def handle_parser_pdf(request: ParserRequest):
   result = await parser_pdf_api(request=request)
-  return result
-
-async def handle_before_parser_pdf(request: ParserRequest):
-  result = await before_pdf_api(request=request)
   return result
   
 

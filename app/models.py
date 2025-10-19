@@ -5,6 +5,7 @@ class SearchRequest(BaseModel):
   keyword: str
 
 class ParserRequest(BaseModel):
-  file_url: str
+  urlLists: list[str]
   formats: list[str]
   target: str
+  numbers: str

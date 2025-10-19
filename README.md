@@ -127,7 +127,7 @@ Content-Type: application/json
 **Request Body**:
 ```json
 {
-  "file_url": "path/to/your/file.pdf",
+  "urlLists": ["path/to/your/file_1.pdf", "path/to/your/file_2.pdf"],
   "formats": ["品番", "品名", "数量", "型番"]
 }
 ```

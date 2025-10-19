@@ -17,6 +17,7 @@ async def parser_pdf_api(request: ParserRequest):
   target = request.target
   parsing_numbers = request.numbers
 
+  example_fields = ",\n".join([f'        "{item}": "〇〇〇"' for item in formats])
   prompt = f"""
   あなたはPDFから表データを抽出するAIアシスタントです。  
   PDF内の「正式な注文表」に含まれるすべての行を抽出してください。  
@@ -49,9 +50,9 @@ async def parser_pdf_api(request: ParserRequest):
   出力は必ず以下の形式の JSON 配列とする：
   ```
   [
-      {{"\n{",\n".join([f'        "{item}": "〇〇〇"' for item in formats])}\n    }},
-      ...
-  ]  
+    {{"\n{example_fields}\n    }},
+    ...
+  ]
   ```
   """
 
